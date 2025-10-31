@@ -1,0 +1,30 @@
+package com.optistockplatrorm.service;
+
+import com.optistockplatrorm.entity.User;
+import com.optistockplatrorm.dto.UserRequestDTO;
+import com.optistockplatrorm.dto.UserResponseDTO;
+import com.optistockplatrorm.mapper.UserMapper;
+import com.optistockplatrorm.util.PasswordUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.optistockplatrorm.repository.UserRepository;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    public UserResponseDTO findUserByEmailAndByPassword(UserRequestDTO dto){
+        User user = userRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new RuntimeException("User not found for the provided email."));
+
+        if (!PasswordUtil.verify(dto.password(), user.getPassword())) {
+            throw new RuntimeException("Authentication failed: invalid password.");
+        }
+        return userMapper.toDto(user);
+    }
+}
