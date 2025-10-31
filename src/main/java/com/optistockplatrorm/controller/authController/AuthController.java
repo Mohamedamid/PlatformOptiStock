@@ -6,6 +6,7 @@ import com.optistockplatrorm.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,14 +19,16 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/")
+    public String bienvenue () {
+        return "Bienvenue sur OptiStock! Utilisez /login pour vous connecter ou /register pour créer un compte";
+    }
+
     @PostMapping("/api/register")
     public ResponseEntity<ClientResponseDTO> register(@Valid @RequestBody ClientRequestDTO dto) {
         ClientResponseDTO createdClient = clientService.createClient(dto);
         return ResponseEntity.ok(createdClient);
     }
-
-
-
 
     @PostMapping("/api/login")
     public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserRequestDTO dto) {
