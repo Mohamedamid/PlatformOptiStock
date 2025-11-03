@@ -1,42 +1,51 @@
 package com.optistockplatrorm.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "warehouses")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "warehouses")
 public class Warehouse {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String code;
-
-    @Column(nullable = false)
+    @NotBlank(message = "Le nom de l'entrepôt est requis")
     private String name;
 
-    private Boolean active = true;
+    @NotBlank(message = "L'adresse est requise")
+    private String address;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @NotBlank(message = "Le code de l'entrepôt est requis")
+    @Column(unique = true)
+    private String code;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @Column(name = "is_active")
+    private boolean active = true;
 
+    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
+    private List<Inventory> inventories;
+
+    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+    private Set<WarehouseManager> managers = new HashSet<>();
+
+    public void assignManager(WarehouseManager manager) {
+        this.managers.add(manager);
+        manager.getWarehouses().add(this);
+    }
+
+    public void unassignManager(WarehouseManager manager) {
+        this.managers.remove(manager);
+        manager.getWarehouses().remove(this);
+    }
 }
