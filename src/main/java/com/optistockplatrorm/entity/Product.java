@@ -1,43 +1,51 @@
 package com.optistockplatrorm.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "products")
-@Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "products")
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "SKU is required")
+    @Column(nullable = false, unique = true, length = 50)
     private String sku;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Product name is required")
+    @Column(nullable = false, length = 150)
     private String name;
 
-    private String category;
+    @NotNull(message = "Category is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
+    @Positive(message = "Purchase price must be positive")
+    @Column(name = "purchase_price")
+    private Double purchasePrice;
+
+    @Positive(message = "Selling price must be positive")
+    @Column(name = "selling_price")
+    private Double sellingPrice;
+
+    @Column(nullable = false)
     private Boolean active = true;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 }

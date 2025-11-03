@@ -9,20 +9,20 @@ import lombok.Builder;
 
 @Builder
 public record ClientRequestDTO(
-        @NotBlank(message = "name is required")
+
+        @NotBlank(message = "Le nom du client est obligatoire.")
         String name,
 
-        @NotBlank(message = "Email is required")
-        @Email(message = "Email should be valid")
+        @NotBlank(message = "L'adresse e-mail est obligatoire.")
+        @Email(message = "L'adresse e-mail doit être valide.")
         @EmailNotTaken
         String email,
 
-        @NotBlank(message = "Password is required")
-        @Size(min = 6, message = "Password must be at least 6 characters")
+        @NotBlank(message = "Le mot de passe est obligatoire.")
+        @Size(min = 6, message = "Le mot de passe doit contenir au moins 6 caractères.")
         String password,
 
-        @NotBlank(message = "Phone is required")
-        @Pattern(regexp = "\\+?\\d{10,15}", message = "Phone must be numeric and 10-15 digits")
+        @NotBlank(message = "Le numéro de téléphone est obligatoire.")
+        @Pattern(regexp = "\\+?\\d{10,15}", message = "Le numéro de téléphone doit contenir entre 10 et 15 chiffres, et peut commencer par '+'.")
         String phone
-
 ) {}

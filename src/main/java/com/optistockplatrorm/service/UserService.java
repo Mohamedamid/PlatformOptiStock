@@ -18,12 +18,12 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserResponseDTO findUserByEmailAndByPassword(UserRequestDTO dto){
+    public UserResponseDTO findUserByEmailAndByPassword(UserRequestDTO dto) {
         User user = userRepository.findByEmail(dto.email())
-                .orElseThrow(() -> new RuntimeException("User not found for the provided email."));
+                .orElseThrow(() -> new RuntimeException("Aucun utilisateur trouvé avec l'adresse e-mail fournie."));
 
         if (!PasswordUtil.verify(dto.password(), user.getPassword())) {
-            throw new RuntimeException("Authentication failed: invalid password.");
+            throw new RuntimeException("Échec de l'authentification : mot de passe invalide.");
         }
         return userMapper.toDto(user);
     }
