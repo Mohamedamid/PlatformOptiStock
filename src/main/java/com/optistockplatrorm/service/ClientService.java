@@ -24,8 +24,7 @@ public class ClientService {
         Client client = Client.builder()
                 .name(dto.name()).email(dto.email())
                 .password(PasswordUtil.hash(dto.password())).phone(dto.phone())
-                .role(Role.CLIENT).active(true)
-                .createdAt(LocalDateTime.now()).build();
+                .role(Role.CLIENT).active(true).createdAt(LocalDateTime.now()).build();
         return clientMapper.toDto(clientRepository.save(client));
     }
 }

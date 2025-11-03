@@ -1,4 +1,5 @@
 package com.optistockplatrorm.dto;
 
-public record UserResponseDTO (Long id, String name, String email) {
-}
+import com.optistockplatrorm.entity.Enums.Role;
+
+public record UserResponseDTO (Long id, String name, String email, Role role) {}
