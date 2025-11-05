@@ -8,6 +8,7 @@ import com.optistockplatrorm.entity.Enums.Role;
 import com.optistockplatrorm.mapper.ProductMapper;
 import com.optistockplatrorm.repository.CategoryRepository;
 import com.optistockplatrorm.repository.ProductRepository;
+import com.optistockplatrorm.util.VerifyRole;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,45 +32,10 @@ public class ProductService {
     private ProductMapper productMapper;
 
     @Autowired
-    private HttpSession session;
-
-    private void checkAccess(String action) {
-        Object roleObj = session.getAttribute("role");
-
-        if (roleObj == null) {
-            throw new RuntimeException("Utilisateur non connecté.");
-        }
-
-        Role role = (Role) roleObj;
-
-        switch (action) {
-            case "CREATE":
-            case "READ":
-                if (role != Role.ADMIN && role != Role.WAREHOUSE_MANAGER && role != Role.CLIENT) {
-                    throw new RuntimeException("Accès refusé : seuls les administrateurs ou les gestionnaires d’entrepôt peuvent " +
-                            "effectuer cette action.");
-                }
-                break;
-
-            case "UPDATE":
-                if (role != Role.ADMIN) {
-                    throw new RuntimeException("Accès refusé : seul un administrateur peut modifier un produit.");
-                }
-                break;
-
-            case "DELETE":
-                if (role != Role.ADMIN) {
-                    throw new RuntimeException("Accès refusé : seul un administrateur peut supprimer un produit.");
-                }
-                break;
-
-            default:
-                throw new RuntimeException("Action non autorisée.");
-        }
-    }
+    private VerifyRole verifyRole;
 
     public Page<ProductResponseDTO> getAllProducts(int page, int size) {
-        checkAccess("READ");
+        verifyRole.checkAccess("READ");
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -79,7 +45,7 @@ public class ProductService {
     }
 
     public ProductResponseDTO getProductById(Long id) {
-        checkAccess("READ");
+        verifyRole.checkAccess("READ");
 
         Optional<Product> product = productRepository.findById(id);
         return product.map(productMapper::toDTO)
@@ -87,7 +53,7 @@ public class ProductService {
     }
 
     public ProductResponseDTO createProduct(ProductRequestDTO dto) {
-        checkAccess("CREATE");
+        verifyRole.checkAccess("CREATE");
 
         Category category = categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new RuntimeException("Catégorie introuvable avec l'identifiant : " + dto.categoryId()));
@@ -107,7 +73,7 @@ public class ProductService {
     }
 
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO dto) {
-        checkAccess("UPDATE");
+        verifyRole.checkAccess("UPDATE");
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produit introuvable avec l'identifiant : " + id));
@@ -127,7 +93,7 @@ public class ProductService {
     }
 
     public boolean deleteProduct(Long id) {
-        checkAccess("DELETE");
+        verifyRole.checkAccess("DELETE");
 
         if (!productRepository.existsById(id)) {
             throw new RuntimeException("Produit introuvable avec l'identifiant : " + id);
