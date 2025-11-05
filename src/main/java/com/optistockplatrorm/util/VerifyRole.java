@@ -38,7 +38,7 @@ public class VerifyRole {
                     throw new RuntimeException("Accès refusé : seul un administrateur peut modifier un produit.");
                 }
                 break;
-
+            case "DELETEManager":
             case "DELETE":
                 if (role != Role.ADMIN) {
                     throw new RuntimeException("Accès refusé : seul un administrateur peut supprimer un produit.");
