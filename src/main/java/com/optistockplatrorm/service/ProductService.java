@@ -3,13 +3,16 @@ package com.optistockplatrorm.service;
 import com.optistockplatrorm.dto.ProductRequestDTO;
 import com.optistockplatrorm.dto.ProductResponseDTO;
 import com.optistockplatrorm.entity.Category;
+import com.optistockplatrorm.entity.Enums.OrderStatus;
+import com.optistockplatrorm.entity.Inventory;
 import com.optistockplatrorm.entity.Product;
-import com.optistockplatrorm.entity.Enums.Role;
+import com.optistockplatrorm.exception.GestionException;
 import com.optistockplatrorm.mapper.ProductMapper;
 import com.optistockplatrorm.repository.CategoryRepository;
+import com.optistockplatrorm.repository.InventoryRepository;
+import com.optistockplatrorm.repository.OrderLineRepository;
 import com.optistockplatrorm.repository.ProductRepository;
 import com.optistockplatrorm.util.VerifyRole;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +36,12 @@ public class ProductService {
 
     @Autowired
     private VerifyRole verifyRole;
+
+    @Autowired
+    private OrderLineRepository orderLineRepository;
+
+    @Autowired
+    private InventoryRepository inventoryRepository;
 
     public Page<ProductResponseDTO> getAllProducts(int page, int size) {
         verifyRole.checkAccess("READ");
@@ -102,4 +111,26 @@ public class ProductService {
         productRepository.deleteById(id);
         return true;
     }
+
+    public void deactivateProduct(String sku) {
+        Product product = productRepository.findBySku(sku)
+                .orElseThrow(() -> new GestionException("Produit non trouvé"));
+
+        long activeOrders = orderLineRepository.countByProduct(
+                sku, List.of(OrderStatus.CREATED, OrderStatus.RESERVED)
+        );
+        if (activeOrders > 0) {
+            throw new GestionException("Impossible de désactiver le produit");
+        }
+
+        List<Inventory> inventories = inventoryRepository.findByProductSku(sku);
+        int totalReserved = inventories.stream().mapToInt(Inventory::getQuantityReserved).sum();
+        if (totalReserved > 0) {
+            throw new GestionException("Impossible de désactiver le produit");
+        }
+
+        product.setActive(false);
+        productRepository.save(product);
+    }
+
 }
