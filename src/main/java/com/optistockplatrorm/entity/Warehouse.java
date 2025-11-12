@@ -3,64 +3,51 @@ package com.optistockplatrorm.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "warehouses")
 public class Warehouse {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Le nom de l'entrepôt est requis")
-    @Column(nullable = false)
+    @NotBlank(message = "Warehouse name is required")
     private String name;
 
-    @NotBlank(message = "L'adresse est requise")
-    @Column(nullable = false)
+    @NotBlank(message = "Address is required")
     private String address;
 
-    @NotBlank(message = "Le code de l'entrepôt est requis")
-    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Warehouse code is required")
+    @Column(unique = true)
     private String code;
 
     @Column(name = "is_active")
     private boolean active = true;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
-    private List<Inventory> inventories;
-
-    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
-    private Set<WarehouseManager> managers = new HashSet<>();
+//    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
+    private Long inventoryId;
 
     @OneToMany(mappedBy = "warehouse" )
     private List<PurchaseOrder> purchaseOrders;
 
-    public void assignManager(WarehouseManager manager) {
+    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+    private Set<WarehouseManager> managers = new HashSet<>();
+
+    public void addManager(WarehouseManager manager) {
         this.managers.add(manager);
         manager.getWarehouses().add(this);
     }
 
-    public void unassignManager(WarehouseManager manager) {
+    public void removeManager(WarehouseManager manager) {
         this.managers.remove(manager);
         manager.getWarehouses().remove(this);
     }

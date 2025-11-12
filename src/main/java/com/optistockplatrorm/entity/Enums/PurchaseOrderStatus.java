@@ -1,5 +1,5 @@
 package com.optistockplatrorm.entity.Enums;
 
 public enum PurchaseOrderStatus {
-    CREATED, APPROVED, RECEIVED, CANCELED
+    CREATED, APPROVED, RECEIVED, PARTIALLY_RECEIVED, CANCELED
 }

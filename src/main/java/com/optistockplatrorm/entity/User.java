@@ -1,11 +1,11 @@
 package com.optistockplatrorm.entity;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 import com.optistockplatrorm.entity.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
@@ -21,17 +21,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
-    @Column(name = "name", nullable = false)
-    private String name;
+    @NotBlank(message = "Le prénom est obligatoire.")
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    @Email(message = "Email should be valid")
-    @NotBlank(message = "Email is required")
+    @NotBlank(message = "Le nom de famille est obligatoire.")
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
+    @Email(message = "L’adresse e-mail doit être valide.")
+    @NotBlank(message = "L’adresse e-mail est obligatoire.")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @NotBlank(message = "Le mot de passe est obligatoire.")
+    @Size(min = 6, message = "Le mot de passe doit contenir au moins 6 caractères.")
     @Column(nullable = false)
     private String password;
 
@@ -44,5 +48,4 @@ public class User {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
 }

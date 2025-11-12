@@ -10,8 +10,11 @@ import lombok.Builder;
 @Builder
 public record ClientRequestDTO(
 
-        @NotBlank(message = "Le nom du client est obligatoire.")
-        String name,
+        @NotBlank(message = "Le nom de famille est obligatoire.")
+        String lastName,
+
+        @NotBlank(message = "Le prénom est obligatoire.")
+        String firstName,
 
         @NotBlank(message = "L'adresse e-mail est obligatoire.")
         @Email(message = "L'adresse e-mail doit être valide.")

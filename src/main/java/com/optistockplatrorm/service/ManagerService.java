@@ -40,10 +40,10 @@ public class ManagerService {
         }
 
         WarehouseManager manager = WarehouseManager.builder()
-                .name(dto.name()).email(dto.email()).password(PasswordUtil.hash(dto.password()))
+                .firstName(dto.firstName()).lastName(dto.lastName()).email(dto.email()).password(PasswordUtil.hash(dto.password()))
                 .role(Role.WAREHOUSE_MANAGER).createdAt(LocalDateTime.now()).active(dto.active()).build();
         for (Warehouse w : warehouses) {
-            manager.assignWarehouse(w);
+            manager.addWarehouse(w);
         }
 
         WarehouseManager saved = ManagerRepository.save(manager);
@@ -60,7 +60,8 @@ public class ManagerService {
         WarehouseManager manager = ManagerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Impossible de mettre à jour : gestionnaire introuvable avec l'identifiant : " + id));
 
-        manager.setName(dto.name());
+        manager.setFirstName(dto.firstName());
+        manager.setLastName(dto.lastName());
         manager.setEmail(dto.email());
         manager.setActive(dto.active());
 
@@ -74,10 +75,10 @@ public class ManagerService {
 
             Set<Warehouse> current = new HashSet<>(manager.getWarehouses());
             for (Warehouse w : current) {
-                manager.unassignWarehouse(w);
+                manager.removeWarehouse(w);
             }
             for (Warehouse w : newWarehouses) {
-                manager.assignWarehouse(w);
+                manager.addWarehouse(w);
             }
         }
 

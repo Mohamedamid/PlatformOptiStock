@@ -1,6 +1,6 @@
 package com.optistockplatrorm.controller;
 
-import com.optistockplatrorm.dto.ApiResponse;
+import com.optistockplatrorm.dto.OptiResponse;
 import com.optistockplatrorm.service.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,9 +16,9 @@ public class ShipmentController {
     private ShipmentService shipmentService;
 
     @PutMapping("/assignCarrier")
-    public ResponseEntity<ApiResponse> assignCarrier(@PathVariable Long id, @RequestParam Long carrierId) {
+    public ResponseEntity<OptiResponse> assignCarrier(@PathVariable Long id, @RequestParam Long carrierId) {
         shipmentService.assignCarrier(id, carrierId);
-        ApiResponse response = ApiResponse.builder().message("Transporteur assigné à l'expédition avec succès").status(HttpStatus.OK.value()).build();
+        OptiResponse response = OptiResponse.builder().message("Transporteur assigné à l'expédition avec succès").status(HttpStatus.OK.value()).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

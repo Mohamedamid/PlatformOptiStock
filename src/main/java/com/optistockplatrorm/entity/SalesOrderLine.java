@@ -1,49 +1,47 @@
 package com.optistockplatrorm.entity;
 
+import com.optistockplatrorm.entity.Enums.OrderLineStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "sales_order_lines")
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@ToString
+@Entity
+@Table(name="sales_order_line")
 public class SalesOrderLine {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="id")
+    private Long id;
+
+    @Column(name="quantity_requested")
+    private Integer  quantityRequested;
+
+    @Column(name="quantity_reserved")
+    private Integer  quantityReserved;
+
+    @Column(name="quantity_backorder")
+    private Integer  quantityBackorder;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="status")
+    private OrderLineStatus status;
+
+    private double price;
 
     @ManyToOne
-    @JoinColumn(name = "sales_order_id", nullable = false)
-    private SalesOrder salesOrder;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
+    @JsonIgnore
     private Product product;
 
-    @Column(nullable = false)
-    private Integer quantity;
-
-    private BigDecimal unitPrice;
-
-    private Boolean backorder = false;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "sales_order_id")
+    @JsonIgnore
+    private SalesOrder salesOrder;
 }

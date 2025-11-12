@@ -1,11 +1,11 @@
 package com.optistockplatrorm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Builder
@@ -30,8 +30,9 @@ public class Product {
     private String name;
 
     @NotNull(message = "Category is required")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnore
     private Category category;
 
     @Positive(message = "Purchase price must be positive")
@@ -47,5 +48,4 @@ public class Product {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
-
 }
