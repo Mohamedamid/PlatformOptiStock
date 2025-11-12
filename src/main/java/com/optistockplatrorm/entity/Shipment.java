@@ -3,8 +3,8 @@ package com.optistockplatrorm.entity;
 import com.optistockplatrorm.entity.Enums.ShipmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

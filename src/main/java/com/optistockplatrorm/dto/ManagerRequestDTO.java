@@ -8,8 +8,11 @@ import java.util.Set;
 
 public record ManagerRequestDTO(
 
-        @NotBlank(message = "Le nom est obligatoire.")
-        String name,
+        @NotBlank(message = "Le nom de famille est obligatoire.")
+        String lastName,
+
+        @NotBlank(message = "Le prénom est obligatoire.")
+        String firstName,
 
         @NotBlank(message = "L'adresse e-mail est obligatoire.")
         @Email(message = "L'adresse e-mail doit être valide.")

@@ -1,58 +1,55 @@
 package com.optistockplatrorm.entity;
 
 import com.optistockplatrorm.entity.Enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import lombok.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "sales_orders")
-@Data
-@Builder
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity
+@ToString
+@Table(name ="sales_order")
 public class SalesOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_id")
+    @JsonIgnore
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "warehouse_id", nullable = false)
+    @JoinColumn(name = "warehouse_id")
+    @JsonIgnore
     private Warehouse warehouse;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OrderStatus status = OrderStatus.CREATED;
+    @Column(name="order_status")
+    private OrderStatus orderStatus;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 
+    @Column(name="confirmed_at")
+    private LocalDateTime confirmedAt;
+
+    @Column(name="reserved_at")
     private LocalDateTime reservedAt;
+
+    @Column(name="shipped_at")
     private LocalDateTime shippedAt;
+
+    @Column(name="delivered_at")
     private LocalDateTime deliveredAt;
 
-    @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
-    private List<SalesOrderLine> lines = new ArrayList<>();
-
-    @OneToOne(mappedBy = "salesOrder", cascade = CascadeType.ALL)
-    private Shipment shipment;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<SalesOrderLine> orderLines;
 }

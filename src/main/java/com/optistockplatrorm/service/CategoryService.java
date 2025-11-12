@@ -13,8 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class CategoryService {
 
@@ -61,19 +59,17 @@ public class CategoryService {
         }
     }
 
-    public Page<CategoryResponseDTO> getAll(int page, int size) {
+    public Page<CategoryResponseDTO> getAllCategory(int page, int size) {
         checkAccess("READ");
 
         Pageable pageable = PageRequest.of(page, size);
-        return categoryRepository.findAll(pageable)
-                .map(categoryMapper::toDto);
+        return categoryRepository.findAll(pageable).map(categoryMapper::toDto);
     }
 
-    public CategoryResponseDTO getById(Long id) {
+    public CategoryResponseDTO getCategoryById(Long id) {
         checkAccess("READ");
 
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Catégorie introuvable avec l'identifiant : " + id));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Catégorie introuvable avec l'identifiant : " + id));
         return categoryMapper.toDto(category);
     }
 
@@ -85,7 +81,7 @@ public class CategoryService {
         return categoryMapper.toDto(saved);
     }
 
-    public CategoryResponseDTO update(Long id, CategoryRequestDTO dto) {
+    public CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO dto) {
         checkAccess("UPDATE");
 
         Category category = categoryRepository.findById(id)
@@ -99,7 +95,7 @@ public class CategoryService {
         return categoryMapper.toDto(updated);
     }
 
-    public void delete(Long id) {
+    public void deleteCategory(Long id) {
         checkAccess("DELETE");
 
         if (!categoryRepository.existsById(id)) {

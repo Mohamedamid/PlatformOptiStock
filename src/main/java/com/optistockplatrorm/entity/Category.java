@@ -1,11 +1,12 @@
 package com.optistockplatrorm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
 import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,5 +32,6 @@ public class Category {
     private Boolean active = true;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Product> products;
 }

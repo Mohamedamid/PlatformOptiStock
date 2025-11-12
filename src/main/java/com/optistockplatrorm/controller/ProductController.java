@@ -1,6 +1,6 @@
 package com.optistockplatrorm.controller;
 
-import com.optistockplatrorm.dto.ApiResponse;
+import com.optistockplatrorm.dto.OptiResponse;
 import com.optistockplatrorm.dto.ProductRequestDTO;
 import com.optistockplatrorm.dto.ProductResponseDTO;
 import com.optistockplatrorm.service.ProductService;
@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/admin/products")
 public class ProductController {
@@ -20,62 +18,61 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse> createProduct(@Valid @RequestBody ProductRequestDTO dto) {
-        ProductResponseDTO product = productService.createProduct(dto);
-        ApiResponse response = ApiResponse.builder()
-                .message("Produit créé avec succès !")
-                .data(product)
-                .status(HttpStatus.CREATED.value())
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllProducts(
+    public ResponseEntity<OptiResponse> obtenirTousLesProduits(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "5") int taille) {
 
-        Page<ProductResponseDTO> productsPage = productService.getAllProducts(page, size);
+        Page<ProductResponseDTO> products = productService.getAllProducts(page, taille);
 
-        ApiResponse response = ApiResponse.builder()
-                .message("Liste paginée des produits.")
-                .data(productsPage.getContent())
-                .status(HttpStatus.OK.value())
-                .build();
-
+        OptiResponse response = OptiResponse.builder().message("Liste des produits récupérée avec succès.").data(products.getContent())
+                .status(HttpStatus.OK.value()).build();
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
+    public ResponseEntity<OptiResponse> obtenirProduitParId(@PathVariable Long id) {
         ProductResponseDTO product = productService.getProductById(id);
-        ApiResponse response = ApiResponse.builder()
-                .message("Produit trouvé.")
-                .data(product)
-                .status(HttpStatus.OK.value())
-                .build();
+
+        if (product == null) {
+            OptiResponse response = OptiResponse.builder().message("Aucun produit trouvé avec l’identifiant fourni.")
+                    .status(HttpStatus.NOT_FOUND.value()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        OptiResponse response = OptiResponse.builder().message("Produit trouvé.").data(product)
+                .status(HttpStatus.OK.value()).build();
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping
+    public ResponseEntity<OptiResponse> creerProduit(@Valid @RequestBody ProductRequestDTO dto) {
+        ProductResponseDTO productCree = productService.createProduct(dto);
+
+        OptiResponse response = OptiResponse.builder().message("Produit créé avec succès.").data(productCree)
+                .status(HttpStatus.CREATED.value()).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody ProductRequestDTO dto) {
+    public ResponseEntity<OptiResponse> modifierProduit(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO dto) {
         ProductResponseDTO product = productService.updateProduct(id, dto);
-        ApiResponse response = ApiResponse.builder()
-                .message("Produit mis à jour avec succès.")
-                .data(product)
-                .status(HttpStatus.OK.value())
-                .build();
+
+        if (product == null) {
+            OptiResponse response = OptiResponse.builder().message("Produit introuvable, mise à jour impossible.")
+                    .status(HttpStatus.NOT_FOUND.value()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        OptiResponse response = OptiResponse.builder().message("Produit mis à jour avec succès.").data(product)
+                .status(HttpStatus.OK.value()).build();
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        ApiResponse response = ApiResponse.builder()
-                .message("Produit supprimé avec succès.")
-                .status(HttpStatus.OK.value())
-                .build();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<OptiResponse> supprimerProduit(@PathVariable Long id) {
+        boolean supprime = productService.deleteProduct(id);
+
+        OptiResponse response = OptiResponse.builder().message(supprime ? "Produit supprimé avec succès." : "Produit introuvable.")
+                .status(supprime ? HttpStatus.OK.value() : HttpStatus.NOT_FOUND.value()).build();
+        return new ResponseEntity<>(response, supprime ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 }

@@ -22,9 +22,11 @@ public class ClientService {
 
     public ClientResponseDTO createClient(ClientRequestDTO dto) {
         Client client = Client.builder()
-                .name(dto.name()).email(dto.email())
-                .password(PasswordUtil.hash(dto.password())).phone(dto.phone())
-                .role(Role.CLIENT).active(true).createdAt(LocalDateTime.now()).build();
+                .firstName(dto.firstName()).lastName(dto.lastName())
+                .email(dto.email()).password(PasswordUtil.hash(dto.password()))
+                .phoneNumber(dto.phone()).role(Role.CLIENT).active(true)
+                .createdAt(LocalDateTime.now()).build();
+
         return clientMapper.toDto(clientRepository.save(client));
     }
 }

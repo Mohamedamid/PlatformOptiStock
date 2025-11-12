@@ -1,38 +1,28 @@
 package com.optistockplatrorm.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
+import java.util.List;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "suppliers")
-@Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name ="supplier")
 public class Supplier {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name="supplier_name")
+    private String supplierName;
 
-    private String contactInfo;
+    @Column(name = "phone_number", nullable = false, unique = true)
+    private String number;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "supplier")
+    private List<PurchaseOrder> purchaseOrders;
 }
