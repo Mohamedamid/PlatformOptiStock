@@ -12,5 +12,7 @@ public interface SalesOrderLineMapper {
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "product.name", target = "productName")
     SalesOrderLineResponseDTO toDTO(SalesOrderLine line);
-    List<SalesOrderLineResponseDTO> toDTO(List<SalesOrderLine> lines);
+//    List<SalesOrderLineResponseDTO> toDTO(List<SalesOrderLine> lines);
+    List<SalesOrderLineResponseDTO> toDTOs(List<SalesOrderLine> lines);
+
 }

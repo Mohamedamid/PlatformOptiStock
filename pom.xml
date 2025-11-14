@@ -80,11 +80,18 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<version>6.2.0</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.mapstruct</groupId>-->
+<!--			<artifactId>mapstruct-parent</artifactId>-->
+<!--			<version>1.5.5.Final</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct-parent</artifactId>
+			<artifactId>mapstruct-processor</artifactId>
 			<version>1.5.5.Final</version>
+			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>

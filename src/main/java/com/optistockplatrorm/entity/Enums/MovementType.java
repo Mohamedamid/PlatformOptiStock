@@ -1,5 +1,5 @@
 package com.optistockplatrorm.entity.Enums;
 
 public enum MovementType {
-    INBOUND, OUTBOUND, ADJUSTMENT
+    INBOUND, OUTBOUND, TRANSFER, ADJUSTMENT
 }

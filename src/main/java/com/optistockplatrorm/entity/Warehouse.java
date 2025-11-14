@@ -33,8 +33,8 @@ public class Warehouse {
     @Column(name = "is_active")
     private boolean active = true;
 
-//    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
-    private Long inventoryId;
+    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Inventory> inventory;
 
     @OneToMany(mappedBy = "warehouse" )
     private List<PurchaseOrder> purchaseOrders;
