@@ -1,3 +1,3 @@
 package com.optistockplatrorm.dto;
 
-public record ShipmentRequest(Long shipmentId, Long carrierId) {}
+public record ShipmentRequest(Long carrierId) {}

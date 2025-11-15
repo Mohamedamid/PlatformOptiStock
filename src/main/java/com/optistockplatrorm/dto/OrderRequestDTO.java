@@ -3,7 +3,7 @@ package com.optistockplatrorm.dto;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
-public record SalesOrderRequestDTO(
+public record OrderRequestDTO(
 
         @NotNull(message = "L’identifiant du client doit être renseigné.")
         Long clientId,
