@@ -3,14 +3,11 @@ pipeline {
     // to be pre-installed on the Jenkins agent machine.
     agent any
 
-    environment {
-        // You can define variables here, for example, your SonarQube project name or specific paths.
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 echo "Checking out code from GitHub..."
+                // NOTE: Changed branch to 'dev' as requested in your provided code
                 git branch: 'dev',
                     credentialsId: 'optickToken', // Uses the GitHub Token ID
                     url: 'https://github.com/Mohamedamid/PlatformOptiStock.git'
@@ -37,10 +34,10 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps { // <--- التعديل هنا: إضافة block ديال steps
+            steps { // <--- [التعديل 1: هذا هو الـsteps block الضروري]
                 // This pulls the Secret Text Credential 'SonarToken' and puts its value into $SONAR_LOGIN_TOKEN
                 withCredentials([string(credentialsId: 'SonarToken', variable: 'SONAR_LOGIN_TOKEN')]) {
-                    steps {
+                    steps { // <--- [التعديل 2: هذا هو الـsteps block داخل withCredentials]
                         echo "Starting SonarQube analysis..."
                         withSonarQubeEnv('SonarQube') {
                             // Run the build, verification, and sonar goal in one command.
@@ -53,7 +50,7 @@ pipeline {
                         }
                     }
                 }
-            } // <--- الإغلاق ديال block ديال steps
+            }
         }
 
         stage('Quality Gate Check') {
