@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo "Checking out code from GitHub..."
-                git branch: 'dev',
+                git branch: '*/main',
                     credentialsId: 'optickToken',
                     url: 'https://github.com/Mohamedamid/PlatformOptiStock.git'
             }
