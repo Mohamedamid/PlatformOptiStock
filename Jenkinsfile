@@ -37,21 +37,23 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            // This pulls the Secret Text Credential 'SonarToken' and puts its value into $SONAR_LOGIN_TOKEN
-            withCredentials([string(credentialsId: 'SonarToken', variable: 'SONAR_LOGIN_TOKEN')]) {
-                steps {
-                    echo "Starting SonarQube analysis..."
-                    withSonarQubeEnv('SonarQube') {
-                        // Run the build, verification, and sonar goal in one command.
-                        sh """
-                        mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=api-logistique \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=$SONAR_LOGIN_TOKEN
-                        """
+            steps { // <--- التعديل هنا: إضافة block ديال steps
+                // This pulls the Secret Text Credential 'SonarToken' and puts its value into $SONAR_LOGIN_TOKEN
+                withCredentials([string(credentialsId: 'SonarToken', variable: 'SONAR_LOGIN_TOKEN')]) {
+                    steps {
+                        echo "Starting SonarQube analysis..."
+                        withSonarQubeEnv('SonarQube') {
+                            // Run the build, verification, and sonar goal in one command.
+                            sh """
+                            mvn clean verify sonar:sonar \
+                            -Dsonar.projectKey=api-logistique \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=$SONAR_LOGIN_TOKEN
+                            """
+                        }
                     }
                 }
-            }
+            } // <--- الإغلاق ديال block ديال steps
         }
 
         stage('Quality Gate Check') {
