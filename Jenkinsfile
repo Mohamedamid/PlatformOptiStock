@@ -64,5 +64,12 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
+
+        stage('Deploy (Optional)') {
+            steps {
+                echo "Deployment steps go here..."
+                bat "echo Deployment successful."
+            }
+        }
     }
 }
