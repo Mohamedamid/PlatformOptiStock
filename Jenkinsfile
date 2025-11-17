@@ -1,15 +1,11 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 echo "Checking out code from GitHub..."
-                git branch: 'main',
+                git branch: 'dev',
                     credentialsId: 'optickToken',
                     url: 'https://github.com/Mohamedamid/PlatformOptiStock.git'
             }
