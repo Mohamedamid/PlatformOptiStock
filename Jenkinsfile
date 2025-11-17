@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -36,7 +40,8 @@ pipeline {
                         -Dsonar.projectKey=api-logistique ^
                         -Dsonar.host.url=http://localhost:9000 ^
                         -Dsonar.login=%SONAR_LOGIN_TOKEN% ^
-                        -Djacoco.check.skip=true
+                        -Djacoco.check.skip=true ^
+                        -Dsonar.branch.name=dev
                         """
                     }
                 }
