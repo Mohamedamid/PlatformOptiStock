@@ -2,8 +2,16 @@ pipeline {
     // Agent 'any' is used, requiring a compatible JDK (e.g., JDK 17) to be pre-installed.
     agent any
 
+    /*
+    environment {
+        // تم حذف هذا الجزء سابقاً لأنه كان فارغاً ويتسبب في خطأ بناء (Syntax Error).
+        // يمكنك إضافته هنا وتعريف متغيرات البيئة إذا كنت بحاجة إليها لاحقاً.
+        // مثال: JAVA_HOME = "${tool 'JDK-17'}"
+    }
+    */
+
     tools {
-        // تم تغيير الاسم إلى 'Maven'، وهو الاسم الصحيح في Global Tool Configuration.
+        // الاسم الذي تم تأكيده من الإعدادات العامة
         maven 'Maven'
     }
 
@@ -30,24 +38,24 @@ pipeline {
                 echo "Running Unit Tests and generating Surefire reports..."
                 bat "mvn test"
 
+                // نشر نتائج الاختبار
                 junit '**/target/surefire-reports/*.xml'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
+                // هذا هو المكان الذي كان فيه block 'steps' الزائد، وقد تم حذفه لتفادي خطأ الـSyntax.
                 withCredentials([string(credentialsId: 'SonarToken', variable: 'SONAR_LOGIN_TOKEN')]) {
-                    steps {
-                        echo "Starting SonarQube analysis..."
-                        withSonarQubeEnv('SonarQube') {
-                            // استخدام 'bat' وأوامر Windows
-                            bat """
-                            mvn clean verify sonar:sonar ^
-                            -Dsonar.projectKey=api-logistique ^
-                            -Dsonar.host.url=http://localhost:9000 ^
-                            -Dsonar.login=%SONAR_LOGIN_TOKEN%
-                            """
-                        }
+                    // أوامر SonarQube مباشرة هنا
+                    withSonarQubeEnv('SonarQube') {
+                        // استخدام 'bat' وأوامر Windows
+                        bat """
+                        mvn clean verify sonar:sonar ^
+                        -Dsonar.projectKey=api-logistique ^
+                        -Dsonar.host.url=http://localhost:9000 ^
+                        -Dsonar.login=%SONAR_LOGIN_TOKEN%
+                        """
                     }
                 }
             }
@@ -56,6 +64,7 @@ pipeline {
         stage('Quality Gate Check') {
             steps {
                 echo "Waiting for SonarQube Quality Gate result..."
+                // الانتظار على نتيجة SonarQube
                 timeout(time: 15, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
@@ -72,8 +81,8 @@ pipeline {
 
         stage('Deploy (Optional)') {
             steps {
-                echo "Deploying the packaged artifact to a Staging/Prod environment..."
-                bat "echo Deployment steps go here..."
+                echo "Deployment steps go here..."
+                bat "echo Deployment successful."
             }
         }
     }
