@@ -48,7 +48,7 @@ pipeline {
                 // هذا هو المكان الذي كان فيه block 'steps' الزائد، وقد تم حذفه لتفادي خطأ الـSyntax.
                 withCredentials([string(credentialsId: 'SonarToken', variable: 'SONAR_LOGIN_TOKEN')]) {
                     // أوامر SonarQube مباشرة هنا
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('SonarScanner') {
                         // استخدام 'bat' وأوامر Windows
                         bat """
                         mvn clean verify sonar:sonar ^
