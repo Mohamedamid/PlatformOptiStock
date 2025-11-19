@@ -47,15 +47,14 @@ pipeline {
             }
         }
 
-        // [الإلغاء]: تم حذف مرحلة Quality Gate Check لتفادي مشكل الـWebhook / Timeout.
-        /* stage('Quality Gate Check') {
+        stage('Quality Gate Check') {
             steps {
                 echo "Waiting for SonarQube Quality Gate result..."
                 timeout(time: 30, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
-        } */
+        }
 
         stage('Package & Archive') {
             steps {
